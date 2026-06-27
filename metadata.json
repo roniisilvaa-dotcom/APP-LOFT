@@ -1,6 +1,6 @@
 {
   "name": "CA.RO — LOFT",
-  "description": "Sistema de gestão de entregas e encomendas para portarias de condomínios.",
+  "description": "Aplicativo de condomínio completo, portaria inteligente e reservas para o LOFT Alphaville.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

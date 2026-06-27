@@ -39,156 +39,62 @@ if (GEMINI_KEY && GEMINI_KEY !== "MY_GEMINI_API_KEY") {
 const DB_PATH = path.join(process.cwd(), "db.json");
 
 // Initial Database Seed Data
-const INITIAL_DATABASE = {
+const INITIAL_DATABASE: any = {
   condominios: [
     {
       id: "condo-1",
       nome: "CA.RO LOFT Alphaville",
-      endereco: "Alameda Itapecuru, 515 - Alphaville, Barueri - SP",
+      endereco: "Alameda Itapecuru, 515 - Alphaville, Barueri - SP, CEP 06454-080",
       plano: "Premium",
     },
   ],
-  apartamentos: [
-    { id: "apt-101", condominio_id: "condo-1", numero: "101", bloco: "A", qr_code: "CAROLOFT-APT-101" },
-    { id: "apt-102", condominio_id: "condo-1", numero: "102", bloco: "A", qr_code: "CAROLOFT-APT-102" },
-    { id: "apt-201", condominio_id: "condo-1", numero: "201", bloco: "A", qr_code: "CAROLOFT-APT-201" },
-    { id: "apt-202", condominio_id: "condo-1", numero: "202", bloco: "A", qr_code: "CAROLOFT-APT-202" },
-    { id: "apt-301", condominio_id: "condo-1", numero: "301", bloco: "B", qr_code: "CAROLOFT-APT-301" },
-    { id: "apt-302", condominio_id: "condo-1", numero: "302", bloco: "B", qr_code: "CAROLOFT-APT-302" },
-    { id: "apt-401", condominio_id: "condo-1", numero: "401", bloco: "B", qr_code: "CAROLOFT-APT-401" },
-    { id: "apt-402", condominio_id: "condo-1", numero: "402", bloco: "B", qr_code: "CAROLOFT-APT-402" },
-  ],
-  moradores: [
-    { id: "mor-1", apartamento_id: "apt-101", nome: "Ronaldo Silva", telefone: "+55 (11) 98765-4321", email: "ronaldo@exemplo.com" },
-    { id: "mor-2", apartamento_id: "apt-101", nome: "Ana Oliveira", telefone: "+55 (11) 98765-1122", email: "ana@exemplo.com" },
-    { id: "mor-3", apartamento_id: "apt-102", nome: "Bruno Santos", telefone: "+55 (11) 91234-5678", email: "bruno@exemplo.com" },
-    { id: "mor-4", apartamento_id: "apt-201", nome: "Carlos Souza", telefone: "+55 (11) 97777-8888", email: "carlos@exemplo.com" },
-    { id: "mor-5", apartamento_id: "apt-202", nome: "Débora Lima", telefone: "+55 (11) 96666-5555", email: "debora@exemplo.com" },
-    { id: "mor-6", apartamento_id: "apt-301", nome: "Eduardo Rocha", telefone: "+55 (11) 95555-4444", email: "eduardo@exemplo.com" },
-    { id: "mor-7", apartamento_id: "apt-302", nome: "Fernanda Costa", telefone: "+55 (11) 94444-3333", email: "fernanda@exemplo.com" },
-    { id: "mor-8", apartamento_id: "apt-401", nome: "Gustavo Santos", telefone: "+55 (11) 93333-2222", email: "gustavo@exemplo.com" },
-    { id: "mor-9", apartamento_id: "apt-402", nome: "Isabela Martins", telefone: "+55 (11) 92222-1111", email: "isabela@exemplo.com" },
-  ],
+  apartamentos: [],
+  moradores: [],
   porteiros: [
-    { id: "port-1", condominio_id: "condo-1", nome: "Valdir Ramos", telefone: "+55 (11) 99911-2233", turno: "Diurno" },
-    { id: "port-2", condominio_id: "condo-1", nome: "Marcos Souza", telefone: "+55 (11) 99922-3344", turno: "Noturno" },
+    { id: "port-1", condominio_id: "condo-1", nome: "Portaria Principal", telefone: "+55 (11) 99999-9999", turno: "Diurno" },
   ],
-  encomendas: [
-    {
-      id: "enc-1",
-      apartamento_id: "apt-101",
-      porteiro_id: "port-1",
-      foto_url: "", // base64 placeholder or mock
-      remetente: "Mercado Livre",
-      transportadora: "Loggi",
-      status: "AGUARDANDO",
-      criado_em: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago (Delayed!)
-    },
-    {
-      id: "enc-2",
-      apartamento_id: "apt-201",
-      porteiro_id: "port-1",
-      foto_url: "",
-      remetente: "Amazon BR",
-      transportadora: "Sequoia",
-      status: "AGUARDANDO",
-      criado_em: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
-    },
-    {
-      id: "enc-3",
-      apartamento_id: "apt-102",
-      porteiro_id: "port-2",
-      foto_url: "",
-      remetente: "Zara Brasil",
-      transportadora: "Correios",
-      status: "ENTREGUE",
-      criado_em: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      entregue_em: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
-      autorizado_terceiro_nome: "",
-    }
-  ],
-  assinaturas: [
-    {
-      id: "ass-1",
-      encomenda_id: "enc-3",
-      assinatura_url: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='50'><path d='M10,25 Q30,5 50,25 T90,25' fill='none' stroke='white' stroke-width='2'/></svg>",
-      assinado_por: "Bruno Santos",
-      autorizado_terceiro: false,
-      criado_em: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
-    }
-  ],
-  notificacoes: [
-    {
-      id: "not-1",
-      encomenda_id: "enc-1",
-      morador_id: "mor-1",
-      canal: "WHATSAPP",
-      status: "ENVIADO",
-      enviado_em: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "not-2",
-      encomenda_id: "enc-2",
-      morador_id: "mor-4",
-      canal: "PUSH",
-      status: "ENVIADO",
-      enviado_em: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    }
-  ],
+  encomendas: [],
+  assinaturas: [],
+  notificacoes: [],
 };
+
+// Populate the 142 apartments dynamically for CA.RO LOFT Alphaville
+for (let i = 1; i <= 142; i++) {
+  const numero = String(i);
+  // Block A is 1-71, Block B is 72-142
+  const bloco = i <= 71 ? "A" : "B";
+  INITIAL_DATABASE.apartamentos.push({
+    id: `apt-${numero}`,
+    condominio_id: "condo-1",
+    numero,
+    bloco,
+    qr_code: `CAROLOFT-APT-${numero}-${bloco}`.toUpperCase()
+  });
+}
 
 // Ensure database file exists
 function readDb() {
   try {
     let db;
     if (!fs.existsSync(DB_PATH)) {
-      db = INITIAL_DATABASE;
+      db = JSON.parse(JSON.stringify(INITIAL_DATABASE));
       fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), "utf8");
     } else {
       const raw = fs.readFileSync(DB_PATH, "utf8");
       db = JSON.parse(raw);
     }
 
-    // Ensure we have exactly 142 apartments pre-seeded
-    if (!db.apartamentos || db.apartamentos.length < 142) {
-      console.log("Detectado menos de 142 apartamentos. Gerando lote completo de 142 apartamentos para LOFT Alphaville...");
-      const generatedApts = [];
-      for (let i = 1; i <= 142; i++) {
-        const floor = Math.ceil(i / 10);
-        const unitOnFloor = i % 10 === 0 ? 10 : i % 10;
-        const numero = `${floor}${unitOnFloor < 10 ? '0' : ''}${unitOnFloor}`;
-        // Floors 1-7 are Block A, Floors 8-15 are Block B
-        const bloco = floor <= 7 ? "A" : "B";
-        const id = `apt-${numero}`;
-        generatedApts.push({
-          id,
-          condominio_id: "condo-1",
-          numero,
-          bloco,
-          qr_code: `CAROLOFT-APT-${numero}-${bloco}`.toUpperCase()
-        });
-      }
-      db.apartamentos = generatedApts;
-
-      // Ensure core moradores are mapped to their apartments
-      if (!db.moradores || db.moradores.length === 0) {
-        db.moradores = INITIAL_DATABASE.moradores;
-      } else {
-        // Ensure they still match the correct generated apt IDs
-        db.moradores = db.moradores.map((mor: any) => {
-          // If the morador refers to old id patterns, map them
-          if (mor.apartamento_id === "apt-1") mor.apartamento_id = "apt-101";
-          if (mor.apartamento_id === "apt-2") mor.apartamento_id = "apt-102";
-          return mor;
-        });
-      }
-
-      writeDb(db);
+    // Ensure we have exactly 142 apartments starting at 1
+    const firstAptIsCorrect = db.apartamentos && db.apartamentos.length > 0 && db.apartamentos[0].numero === "1";
+    if (!db.apartamentos || db.apartamentos.length !== 142 || !firstAptIsCorrect) {
+      console.log("Banco de dados ausente, incompleto ou padrão antigo detectado. Gerando lote de 1 a 142...");
+      db = JSON.parse(JSON.stringify(INITIAL_DATABASE));
+      fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), "utf8");
     }
     return db;
   } catch (error) {
     console.error("Failed to read database:", error);
-    return INITIAL_DATABASE;
+    return JSON.parse(JSON.stringify(INITIAL_DATABASE));
   }
 }
 

@@ -414,28 +414,36 @@ export default function LabelScanner({ onScanComplete, apartmentsList, hideQrCod
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[11px] font-bold text-white/40 uppercase mb-1.5 tracking-wider">Remetente</label>
-                        <select
+                        <input
+                          type="text"
+                          list="senders-list"
                           value={simSender}
                           onChange={(e) => setSimSender(e.target.value)}
-                          className="w-full bg-black text-white border border-white/10 rounded-lg p-2.5 text-xs focus:outline-none focus:border-amber-500"
-                        >
+                          placeholder="Digite ou selecione"
+                          className="w-full bg-black text-white border border-white/10 rounded-lg p-2.5 text-xs focus:outline-none focus:border-amber-500 placeholder-white/20"
+                        />
+                        <datalist id="senders-list">
                           {senders.map((s) => (
-                            <option key={s} value={s} className="bg-[#0A0A0A]">{s}</option>
+                            <option key={s} value={s} />
                           ))}
-                        </select>
+                        </datalist>
                       </div>
 
                       <div>
                         <label className="block text-[11px] font-bold text-white/40 uppercase mb-1.5 tracking-wider">Transportadora</label>
-                        <select
+                        <input
+                          type="text"
+                          list="couriers-list"
                           value={simCourier}
                           onChange={(e) => setSimCourier(e.target.value)}
-                          className="w-full bg-black text-white border border-white/10 rounded-lg p-2.5 text-xs focus:outline-none focus:border-amber-500"
-                        >
+                          placeholder="Digite ou selecione"
+                          className="w-full bg-black text-white border border-white/10 rounded-lg p-2.5 text-xs focus:outline-none focus:border-amber-500 placeholder-white/20"
+                        />
+                        <datalist id="couriers-list">
                           {couriers.map((c) => (
-                            <option key={c} value={c} className="bg-[#0A0A0A]">{c}</option>
+                            <option key={c} value={c} />
                           ))}
-                        </select>
+                        </datalist>
                       </div>
                     </div>
 

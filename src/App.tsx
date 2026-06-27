@@ -225,10 +225,7 @@ export default function App() {
     qty: number;
     status: "pendente" | "aprovado" | "entregue" | "cancelado";
     date: string;
-  }>>([
-    { id: "req-1", residentName: "Mariana Silva", apt: "204", bloc: "A", qty: 2, status: "entregue", date: "Ontem" },
-    { id: "req-2", residentName: "Daniel Souza", apt: "115", bloc: "B", qty: 1, status: "pendente", date: "Hoje às 10:30" }
-  ]);
+  }>>([]);
 
   // Gym (Academia) States
   const [gymIssues, setGymIssues] = useState<Array<{
@@ -238,9 +235,7 @@ export default function App() {
     morador: string;
     data: string;
     status: "pendente" | "resolvido";
-  }>>([
-    { id: "issue-1", equipamento: "Esteira 2", descricao: "A inclinação não está funcionando.", morador: "Thiago Apto 804", data: "Ontem", status: "pendente" }
-  ]);
+  }>>([]);
 
   const [residentReservations, setResidentReservations] = useState<Array<{
     id: string;
@@ -248,10 +243,7 @@ export default function App() {
     date: string;
     slot: string;
     status: "confirmado" | "pendente";
-  }>>([
-    { id: "res-1", amenity: "Espaço Gourmet", date: "Hoje", slot: "18:00 - 22:00", status: "confirmado" },
-    { id: "res-2", amenity: "Salão de Festas", date: "Amanhã", slot: "14:00 - 22:00", status: "confirmado" }
-  ]);
+  }>>([]);
   const [newReservationAmenity, setNewReservationAmenity] = useState<string>("Espaço Gourmet");
   const [newReservationDate, setNewReservationDate] = useState<string>("");
   const [newReservationSlot, setNewReservationSlot] = useState<string>("09:00 - 11:00");
@@ -262,9 +254,7 @@ export default function App() {
     cpf: string;
     date: string;
     status: "ativo" | "expirado";
-  }>>([
-    { id: "guest-1", name: "Carlos Eduardo Costa", cpf: "123.456.789-00", date: "Hoje (27/06)", status: "ativo" }
-  ]);
+  }>>([]);
   const [newGuestName, setNewGuestName] = useState("");
   const [newGuestCpf, setNewGuestCpf] = useState("");
   const [newGuestDate, setNewGuestDate] = useState("");
@@ -277,35 +267,7 @@ export default function App() {
     date: string;
     likes: number;
     hasLiked?: boolean;
-  }>>([
-    {
-      id: "post-1",
-      author: "Juliana Mendes",
-      apartment: "Apto 302 - Bloco B",
-      content: "Alguém indica uma boa diarista que atenda aqui em Alphaville quinzenalmente?",
-      date: "Ontem às 15:40",
-      likes: 4,
-      hasLiked: false
-    },
-    {
-      id: "post-2",
-      author: "Marcos Ribeiro",
-      apartment: "Apto 201 - Bloco A",
-      content: "Alugo vaga de garagem extra para carro de passeio. Interessados me chamem no privado.",
-      date: "Ontem às 10:15",
-      likes: 2,
-      hasLiked: false
-    },
-    {
-      id: "post-3",
-      author: "Administração do LOFT",
-      apartment: "Condomínio",
-      content: "📢 Comunicado Importante: No dia 30/06 faremos a manutenção semestral do gerador de energia das 14h às 16h.",
-      date: "25 Jun às 09:00",
-      likes: 8,
-      hasLiked: false
-    }
-  ]);
+  }>>([]);
   const [newPostContent, setNewPostContent] = useState("");
 
 
@@ -349,8 +311,12 @@ export default function App() {
       }
 
       // Default the morador profile testing to the first resident
-      if (apts.length > 0 && apts[0].residents && apts[0].residents.length > 0 && !selectedResidentId) {
-        setSelectedResidentId(apts[0].residents[0].id);
+      if (apts.length > 0 && !selectedResidentId) {
+        if (apts[0].residents && apts[0].residents.length > 0) {
+          setSelectedResidentId(apts[0].residents[0].id);
+        } else {
+          setSelectedResidentId(`mock-res-${apts[0].id}`);
+        }
       }
 
       setLoading(false);
@@ -449,7 +415,17 @@ export default function App() {
   // Current active resident details (for Resident App simulator)
   const activeResident = apartments
     .flatMap((apt) => apt.residents || [])
-    .find((r) => r.id === selectedResidentId);
+    .find((r) => r.id === selectedResidentId) || (selectedResidentId && selectedResidentId.startsWith("mock-res-") ? (() => {
+      const aptId = selectedResidentId.replace("mock-res-", "");
+      const apt = apartments.find(a => a.id === aptId);
+      return {
+        id: selectedResidentId,
+        nome: `Morador da Unidade ${apt?.numero || "S/U"}`,
+        apartamento_id: aptId,
+        telefone: "+55 (11) 90000-0000",
+        email: "morador@exemplo.com"
+      };
+    })() : (apartments.length > 0 && apartments[0].residents && apartments[0].residents.length > 0 ? apartments[0].residents[0] : null));
 
   const activeResidentApartment = apartments.find(
     (apt) => apt.id === activeResident?.apartamento_id
@@ -1223,7 +1199,7 @@ export default function App() {
               }`}
             >
               <Settings className="w-3.5 h-3.5" />
-              <span>Painel ADM</span>
+              <span>Painel Síndico / ADM</span>
             </button>
 
             <button
@@ -1255,6 +1231,52 @@ export default function App() {
           <>
             {currentTab === "portaria" && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                {/* BRAND HERO HEADER - LOFT ALPHAVILLE */}
+                <div className="lg:col-span-12 relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl h-48 md:h-56 bg-black">
+                  <img 
+                    src="https://sincoengenharia.com.br/wp-content/uploads/2019/11/loft-alphaville-fachada-1.jpg" 
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1600&auto=format&fit=crop";
+                    }}
+                    alt="LOFT Alphaville Fachada Real" 
+                    className="w-full h-full object-cover brightness-[0.55] saturate-[1.1] transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full flex items-center space-x-1.5">
+                    <span className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] font-bold text-white font-mono uppercase tracking-wider">Sistema Operacional Ativo</span>
+                  </div>
+                  
+                  <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-[10px] font-black bg-amber-500 text-black px-2 py-0.5 rounded uppercase tracking-widest">Sinco Engenharia</span>
+                        <span className="text-[10px] font-mono font-bold text-white/50">• Alphaville, Barueri</span>
+                      </div>
+                      <h1 className="text-xl md:text-3xl font-black text-white tracking-tight uppercase">LOFT Alphaville</h1>
+                      <p className="text-xs text-white/60 font-medium">Alameda Itapecuru, 515 • Alphaville • Barueri - SP • CEP 06454-080</p>
+                    </div>
+
+                    <div className="flex items-center space-x-2.5 bg-black/60 backdrop-blur-md border border-white/10 p-3 rounded-2xl shrink-0">
+                      <div className="text-center px-2">
+                        <span className="text-xs text-white/40 block font-bold uppercase text-[9px] tracking-wider font-mono">Unidades</span>
+                        <span className="text-base font-black text-amber-500">142</span>
+                      </div>
+                      <div className="w-px h-8 bg-white/10" />
+                      <div className="text-center px-2">
+                        <span className="text-xs text-white/40 block font-bold uppercase text-[9px] tracking-wider font-mono">Entregas</span>
+                        <span className="text-base font-black text-amber-500">{deliveries.filter(d => d.status === "AGUARDANDO").length}</span>
+                      </div>
+                      <div className="w-px h-8 bg-white/10" />
+                      <div className="text-center px-2">
+                        <span className="text-xs text-white/40 block font-bold uppercase text-[9px] tracking-wider font-mono">Blocos</span>
+                        <span className="text-base font-black text-amber-500">2 <span className="text-[9px] text-white/50">(A/B)</span></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 {/* BANNER DE INCENTIVO EM DESTAQUE PARA O APP DO MORADOR */}
                 <div className="lg:col-span-12 bg-gradient-to-r from-amber-500/10 via-[#0A0A0A] to-[#151109] border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl shadow-amber-500/5">
@@ -2823,8 +2845,12 @@ export default function App() {
                 onChange={(e) => {
                   const aptId = e.target.value;
                   const apt = apartments.find(a => a.id === aptId);
-                  if (apt && apt.residents && apt.residents.length > 0) {
-                    setSelectedResidentId(apt.residents[0].id);
+                  if (apt) {
+                    if (apt.residents && apt.residents.length > 0) {
+                      setSelectedResidentId(apt.residents[0].id);
+                    } else {
+                      setSelectedResidentId(`mock-res-${apt.id}`);
+                    }
                   }
                 }}
                 className="w-full bg-black text-white border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:border-amber-500 cursor-pointer"
@@ -2894,11 +2920,17 @@ export default function App() {
                   onChange={(e) => setSelectedResidentId(e.target.value)}
                   className="bg-transparent text-xs font-bold text-amber-500 focus:outline-none focus:ring-0 py-0.5 max-w-[200px] text-right cursor-pointer"
                 >
-                  {activeResidentApartment?.residents?.map((res) => (
-                    <option key={res.id} value={res.id} className="bg-[#0A0A0A] text-white text-xs">
-                      {res.nome}
+                  {activeResidentApartment?.residents && activeResidentApartment.residents.length > 0 ? (
+                    activeResidentApartment.residents.map((res) => (
+                      <option key={res.id} value={res.id} className="bg-[#0A0A0A] text-white text-xs">
+                        {res.nome}
+                      </option>
+                    ))
+                  ) : (
+                    <option value={selectedResidentId} className="bg-[#0A0A0A] text-white text-xs">
+                      {activeResident?.nome || "Morador"}
                     </option>
-                  ))}
+                  )}
                 </select>
               </div>
 
@@ -2908,10 +2940,30 @@ export default function App() {
                 {/* 1. HOME TAB */}
                 {residentAppTab === "home" && (
                   <div className="space-y-5 animate-fade-in">
+                    
+                    {/* LOFT Alphaville Banner Image */}
+                    <div className="relative h-32 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                      <img 
+                        src="https://sincoengenharia.com.br/wp-content/uploads/2019/11/loft-alphaville-fachada-1.jpg" 
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop";
+                        }}
+                        alt="LOFT Alphaville" 
+                        className="w-full h-full object-cover brightness-[0.7] saturate-[1.1]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                      <div className="absolute bottom-3 left-4 right-4">
+                        <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded uppercase tracking-wider">LOFT Alphaville</span>
+                        <h4 className="text-sm font-black text-white tracking-tight mt-1">Al. Itapecuru, 515</h4>
+                        <p className="text-[8px] text-white/60 font-mono">Alphaville, Barueri • Sinco Engenharia</p>
+                      </div>
+                    </div>
+
                     {/* Welcome greeting */}
                     <div>
-                      <h4 className="text-sm text-white/50">Olá,</h4>
-                      <h3 className="text-lg font-black text-white leading-tight">
+                      <h4 className="text-xs text-white/50">Olá,</h4>
+                      <h3 className="text-base font-black text-white leading-tight">
                         {activeResident?.nome?.split(" ")[0] || "Morador"} 👋
                       </h3>
                       <p className="text-[10px] text-amber-500 font-bold uppercase tracking-wider mt-1">
@@ -2997,10 +3049,10 @@ export default function App() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
-                              <h5 className="text-xs font-bold text-white">Lavanderia OMO (Automatizada)</h5>
-                              <span className="bg-amber-500 text-black text-[7px] font-black px-1 py-0.2 rounded uppercase">Fichas Digitais</span>
+                              <h5 className="text-xs font-bold text-white">Lavanderia Coletiva</h5>
+                              <span className="bg-amber-500 text-black text-[7px] font-black px-1 py-0.2 rounded uppercase">Fichas Físicas</span>
                             </div>
-                            <p className="text-[9px] text-white/40">Ative e pague ciclos direto pelo celular.</p>
+                            <p className="text-[9px] text-white/40">Solicite fichas de lavar/secar para uso no LOFT.</p>
                           </div>
                         </button>
 
@@ -3330,6 +3382,43 @@ export default function App() {
                       <p className="text-[10px] text-white/40">Reserve as facilidades exclusivas do LOFT Alphaville.</p>
                     </div>
 
+                    {/* Visual Showcase of LOFT Common Areas */}
+                    <div className="space-y-3">
+                      <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest block">Explore os Espaços Comuns</span>
+                      
+                      <div className="flex space-x-3.5 overflow-x-auto pb-2 scrollbar-none snap-x">
+                        {[
+                          { name: "Espaço Gourmet & Deck", icon: "🥩", img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=400&auto=format&fit=crop", desc: "Varanda gourmet, churrasqueira de alta tecnologia e lounge de estar integrado." },
+                          { name: "Coworking Privativo", icon: "💻", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=400&auto=format&fit=crop", desc: "Estações de trabalho equipadas, fibra 1Gbps e sala de reunião dedicada." },
+                          { name: "Salão de Jogos & Bar", icon: "🎮", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=400&auto=format&fit=crop", desc: "Mesa de bilhar profissional, chopeira instalada e poltronas confortáveis." },
+                          { name: "Salão de Festas Loft", icon: "🎉", img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=400&auto=format&fit=crop", desc: "Ambiente sofisticado, pé-direito duplo e capacidade para até 80 convidados." },
+                          { name: "Lavanderia Coletiva", icon: "👔", img: "https://images.unsplash.com/photo-1545173168-9f1947eebd01?q=80&w=400&auto=format&fit=crop", desc: "Lavadoras e secadoras industriais de alta velocidade OMO Professional." }
+                        ].map((area) => (
+                          <div 
+                            key={area.name}
+                            onClick={() => setNewReservationAmenity(area.name)}
+                            className={`min-w-[200px] w-[200px] bg-zinc-950 border rounded-2xl overflow-hidden snap-start cursor-pointer transition-all ${
+                              newReservationAmenity === area.name 
+                                ? "border-amber-500 ring-1 ring-amber-500/50 shadow-md shadow-amber-500/10" 
+                                : "border-white/5 hover:border-white/20"
+                            }`}
+                          >
+                            <div className="h-24 relative">
+                              <img src={area.img} alt={area.name} className="w-full h-full object-cover brightness-[0.7]" />
+                              <span className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-xs w-7 h-7 rounded-full flex items-center justify-center">
+                                {area.icon}
+                              </span>
+                            </div>
+                            <div className="p-3 space-y-1">
+                              <h5 className="text-[11px] font-black text-white">{area.name}</h5>
+                              <p className="text-[9px] text-white/50 leading-tight line-clamp-2">{area.desc}</p>
+                              <span className="text-[8.5px] text-amber-500 font-bold block pt-1 hover:underline">Selecionar para reservar →</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     {/* Reservation Form */}
                     <div className="bg-[#111111] border border-white/5 p-4 rounded-xl space-y-3.5">
                       <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
@@ -3346,7 +3435,7 @@ export default function App() {
                             className="w-full bg-black text-white border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:border-amber-500 cursor-pointer"
                           >
                             <option value="Espaço Gourmet & Deck" className="bg-[#0A0A0A]">🥩 Espaço Gourmet & Deck</option>
-                            <option value="Lavanderia Coletiva OMO" className="bg-[#0A0A0A]">👔 Lavanderia Coletiva OMO (Máquina)</option>
+                            <option value="Lavanderia Coletiva" className="bg-[#0A0A0A]">👔 Lavanderia Coletiva (Máquina)</option>
                             <option value="Salão de Jogos & Bar" className="bg-[#0A0A0A]">🎮 Salão de Jogos & Bar</option>
                             <option value="Coworking Privativo" className="bg-[#0A0A0A]">💻 Sala de Reunião Coworking</option>
                             <option value="Salão de Festas Loft" className="bg-[#0A0A0A]">🎉 Salão de Festas Premium</option>
